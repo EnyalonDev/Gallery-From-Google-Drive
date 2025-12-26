@@ -1,0 +1,240 @@
+.container {
+    max-width: 1000px;
+    margin: 0 auto;
+    padding: 2rem 5%;
+}
+
+.header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 2rem;
+    padding-bottom: 1rem;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.header h1 {
+    margin: 0;
+    font-size: 1.8rem;
+    color: #f8fafc;
+}
+
+.backBtn {
+    color: #94a3b8;
+    text-decoration: none;
+    font-weight: 500;
+    padding: 8px 16px;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 8px;
+    transition: all 0.2s;
+}
+
+.backBtn:hover {
+    background: rgba(255, 255, 255, 0.05);
+    color: #fff;
+}
+
+.section {
+    background: #1e293b;
+    padding: 1.5rem;
+    border-radius: 12px;
+    border: 1px solid rgba(255, 255, 255, 0.05);
+    margin-bottom: 2rem;
+}
+
+.section h2 {
+    margin-top: 0;
+    font-size: 1.2rem;
+    color: #38bdf8;
+}
+
+.hint {
+    color: #64748b;
+    font-size: 0.9rem;
+    margin-bottom: 1rem;
+}
+
+.inputFull {
+    width: 100%;
+    padding: 12px;
+    background: #0f172a;
+    border: 1px solid #334155;
+    color: #fff;
+    border-radius: 6px;
+    font-family: inherit;
+}
+
+/* Table */
+.tableWrapper {
+    overflow-x: auto;
+    margin-bottom: 2rem;
+}
+
+.table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.table th {
+    text-align: left;
+    padding: 12px;
+    color: #94a3b8;
+    border-bottom: 1px solid #334155;
+    font-size: 0.9rem;
+}
+
+.table td {
+    padding: 12px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+    color: #e2e8f0;
+}
+
+.urlText {
+    display: block;
+    max-width: 300px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    color: #64748b;
+    font-size: 0.85rem;
+}
+
+.inputTable {
+    background: #0f172a;
+    border: 1px solid #38bdf8;
+    color: white;
+    padding: 6px;
+    border-radius: 4px;
+    width: 100%;
+}
+
+.actionsCell {
+    display: flex;
+    gap: 8px;
+}
+
+/* Buttons */
+.btnEdit,
+.btnDelete,
+.btnSuccess,
+.btnCancel {
+    border: none;
+    border-radius: 4px;
+    width: 32px;
+    height: 32px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.btnEdit {
+    background: rgba(255, 255, 255, 0.1);
+    color: #fff;
+}
+
+.btnEdit:hover {
+    background: #38bdf8;
+    color: #000;
+}
+
+.btnDelete {
+    background: rgba(239, 68, 68, 0.2);
+    color: #ef4444;
+}
+
+.btnDelete:hover {
+    background: #ef4444;
+    color: #fff;
+}
+
+.btnSuccess {
+    background: #22c55e;
+    color: #fff;
+}
+
+.btnCancel {
+    background: #64748b;
+    color: #fff;
+}
+
+/* Add Form */
+.addForm {
+    background: #0f172a;
+    padding: 1.5rem;
+    border-radius: 8px;
+    border: 1px dashed #334155;
+}
+
+.addForm h3 {
+    margin: 0 0 1rem 0;
+    font-size: 1rem;
+    color: #94a3b8;
+}
+
+.flexRow {
+    display: flex;
+    gap: 1rem;
+    flex-wrap: wrap;
+}
+
+.input {
+    padding: 10px;
+    background: #1e293b;
+    border: 1px solid #334155;
+    color: white;
+    border-radius: 6px;
+}
+
+.flexGrow {
+    flex: 1;
+}
+
+.btnAdd {
+    padding: 0 20px;
+    background: #38bdf8;
+    color: #0f172a;
+    border: none;
+    border-radius: 6px;
+    font-weight: 600;
+    cursor: pointer;
+}
+
+.btnAdd:hover {
+    background: #7dd3fc;
+}
+
+/* Footer */
+.footer {
+    display: flex;
+    justify-content: flex-end;
+    gap: 1rem;
+    margin-top: 3rem;
+    padding-top: 2rem;
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.btnPrimary {
+    padding: 12px 24px;
+    background: linear-gradient(90deg, #38bdf8, #818cf8);
+    color: #fff;
+    border: none;
+    font-weight: 600;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 1rem;
+}
+
+.btnSecondary {
+    padding: 12px 24px;
+    background: transparent;
+    color: #94a3b8;
+    border: 1px solid #334155;
+    border-radius: 8px;
+    cursor: pointer;
+}
+
+.btnSecondary:hover {
+    color: #fff;
+    border-color: #fff;
+}

@@ -1,0 +1,709 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Drive Galleries | Premium View</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-color: #0f172a;
+            --card-bg: #1e293b;
+            --text-primary: #f8fafc;
+            --text-secondary: #94a3b8;
+            --accent-color: #38bdf8;
+            --accent-glow: rgba(56, 189, 248, 0.3);
+            --font-main: 'Outfit', sans-serif;
+        }
+
+        body {
+            margin: 0;
+            padding: 0;
+            background-color: var(--bg-color);
+            color: var(--text-primary);
+            font-family: var(--font-main);
+            min-height: 100vh;
+        }
+
+        /* Header Styles */
+        header {
+            padding: 2rem 5%;
+            background: rgba(15, 23, 42, 0.9);
+            backdrop-filter: blur(10px);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        h1 {
+            margin: 0;
+            font-weight: 600;
+            background: linear-gradient(90deg, #38bdf8, #818cf8);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            font-size: 1.8rem;
+        }
+
+        /* Tabs Navigation */
+        .tabs {
+            display: flex;
+            gap: 1rem;
+            margin-top: 1rem;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        .tab-btn {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            color: var(--text-secondary);
+            padding: 0.8rem 1.5rem;
+            border-radius: 50px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-family: var(--font-main);
+            font-weight: 400;
+        }
+
+        .tab-btn:hover {
+            background: rgba(255, 255, 255, 0.1);
+            color: white;
+        }
+
+        .tab-btn.active {
+            background: var(--accent-color);
+            color: #0f172a;
+            font-weight: 600;
+            box-shadow: 0 0 15px var(--accent-glow);
+            border-color: var(--accent-color);
+        }
+
+        /* Main Content */
+        main {
+            padding: 2rem 5%;
+            max-width: 1600px;
+            margin: 0 auto;
+        }
+
+        /* Gallery Grid */
+        .gallery-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 2rem;
+            animation: fadeIn 0.5s ease;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* Card Styles */
+        .card {
+            background: var(--card-bg);
+            border-radius: 16px;
+            overflow: hidden;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+            transition: all 0.3s;
+            cursor: pointer;
+            border: 1px solid rgba(255, 255, 255, 0.05);
+        }
+
+        .card:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.2);
+            border-color: rgba(56, 189, 248, 0.2);
+        }
+
+        .img-wrapper {
+            width: 100%;
+            height: 250px;
+            position: relative;
+            background: #000;
+        }
+
+        .img-wrapper img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .overlay {
+            position: absolute;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.3);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            opacity: 0;
+            transition: opacity 0.2s;
+        }
+
+        .card:hover .overlay {
+            opacity: 1;
+        }
+
+        .icon {
+            font-size: 2rem;
+        }
+
+        /* Loading & Error */
+        .loader,
+        .empty-msg,
+        .error-msg {
+            text-align: center;
+            padding: 4rem;
+            color: var(--text-secondary);
+            grid-column: 1 / -1;
+        }
+
+        .spinner {
+            width: 40px;
+            height: 40px;
+            border: 4px solid rgba(255, 255, 255, 0.1);
+            border-left-color: var(--accent-color);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 1rem;
+        }
+
+        @keyframes spin {
+            100% {
+                transform: rotate(360deg);
+            }
+        }
+
+        /* Modal */
+        .modal-overlay {
+            position: fixed;
+            inset: 0;
+            z-index: 999;
+            background: rgba(0, 0, 0, 0.92);
+            backdrop-filter: blur(8px);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .modal-content {
+            position: relative;
+            max-width: 85vw;
+            max-height: 85vh;
+            pointer-events: none;
+        }
+
+        .modal-image {
+            max-width: 100%;
+            max-height: 85vh;
+            display: block;
+            object-fit: contain;
+            pointer-events: auto;
+        }
+
+        @keyframes slideInFade {
+            from {
+                opacity: 0;
+                transform: scale(0.96) translateY(10px);
+            }
+
+            to {
+                opacity: 1;
+                transform: scale(1) translateY(0);
+            }
+        }
+
+        .nav-btn,
+        .close-btn {
+            position: absolute;
+            background: rgba(255, 255, 255, 0.1);
+            color: white;
+            border: none;
+            border-radius: 50%;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: background 0.2s;
+        }
+
+        .nav-btn {
+            width: 60px;
+            height: 60px;
+            font-size: 30px;
+            top: 50%;
+            transform: translateY(-50%);
+        }
+
+        .nav-btn:hover,
+        .close-btn:hover {
+            background: rgba(255, 255, 255, 0.3);
+        }
+
+        .prev-btn {
+            left: 20px;
+        }
+
+        .next-btn {
+            right: 20px;
+        }
+
+        .close-btn {
+            top: 20px;
+            right: 20px;
+            width: 44px;
+            height: 44px;
+            font-size: 28px;
+        }
+
+        .info-bar {
+            position: absolute;
+            bottom: 30px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: rgba(20, 20, 25, 0.8);
+            backdrop-filter: blur(10px);
+            padding: 8px 20px;
+            border-radius: 30px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .info-counter {
+            color: #38bdf8;
+            font-weight: 600;
+        }
+
+        .download-btn {
+            /* Button style reused for config */
+            background: rgba(255, 255, 255, 0.1);
+            color: white;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            padding: 6px 12px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 0.9rem;
+        }
+
+        /* Gallery Visibility */
+        .gallery-content {
+            display: none;
+        }
+
+        .gallery-content.active {
+            display: block;
+        }
+
+        .badge {
+            font-size: 0.8rem;
+            background: rgba(247, 223, 30, 0.15);
+            /* JS Yellow */
+            color: #f7df1e;
+            padding: 4px 10px;
+            border-radius: 6px;
+            -webkit-text-fill-color: #f7df1e;
+            vertical-align: middle;
+            margin-left: 8px;
+            border: 1px solid rgba(247, 223, 30, 0.3);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            font-weight: 600;
+        }
+    </style>
+</head>
+
+<body>
+
+    <header>
+        <div>
+            <h1>Gallery From Google Drive <span style="font-size: 1rem; color: #94a3b8; margin: 0 10px;">Option 1</span>
+                <span class="badge">Vanilla JS</span>
+            </h1>
+            <p style="color: var(--text-secondary); margin-top: 5px; font-size: 0.9rem;">
+                Connected to Google Drive
+                <!-- Config Btn appended here by JS -->
+            </p>
+        </div>
+    </header>
+
+    <main>
+        <!-- APP VIEW -->
+        <div id="app-view">
+            <div class="tabs" id="tabs-container">
+                <!-- Generado por JS -->
+            </div>
+
+            <div class="gallery-container" id="gallery-container" style="margin-top: 2rem;">
+                <!-- Contenido dinámico -->
+            </div>
+        </div>
+
+        <!-- CONFIG VIEW (Hidden by default) -->
+        <div id="config-view"
+            style="display: none; max-width: 800px; margin: 0 auto; background: #1e293b; padding: 2rem; border-radius: 12px; border: 1px solid rgba(255,255,255,0.05);">
+            <h2
+                style="color: #38bdf8; margin-top: 0; border-bottom: 1px solid rgba(255,255,255,0.1); padding-bottom: 1rem; margin-bottom: 1.5rem;">
+                ⚙️ Configuración</h2>
+
+            <div style="margin-bottom: 2rem;">
+                <label style="display: block; color: #94a3b8; margin-bottom: 0.5rem; font-size: 0.9rem;">URL del Apps
+                    Script (API):</label>
+                <input type="text" id="config-api-url"
+                    style="width: 100%; padding: 12px; background: #0f172a; border: 1px solid #334155; color: white; border-radius: 6px; box-sizing: border-box;">
+            </div>
+
+            <h3 style="color: #e2e8f0; margin-bottom: 1rem;">Mis Galerías</h3>
+            <div id="config-galleries-list"
+                style="margin-bottom: 2rem; display: flex; flex-direction: column; gap: 10px;">
+                <!-- Rows generated by JS -->
+            </div>
+
+            <form id="add-gallery-form"
+                style="background: #0f172a; padding: 1.5rem; border-radius: 8px; border: 1px dashed #334155;">
+                <h4 style="margin: 0 0 1rem 0; color: #94a3b8; font-weight: 500;">Añadir Nueva Galería</h4>
+                <div style="display: flex; gap: 10px; flex-wrap: wrap;">
+                    <input type="text" id="new-name" placeholder="Nombre (Ej: Bodas)" required
+                        style="padding: 10px; background: #1e293b; border: 1px solid #334155; color: white; border-radius: 4px; width: 200px;">
+                    <input type="text" id="new-url" placeholder="Pegar enlace de Google Drive aquí..." required
+                        style="flex: 1; padding: 10px; background: #1e293b; border: 1px solid #334155; color: white; border-radius: 4px; min-width: 250px;">
+                    <button type="submit"
+                        style="background: #38bdf8; border: none; padding: 0 20px; border-radius: 4px; cursor: pointer; color: #0f172a; font-weight: bold;">+
+                        Añadir</button>
+                </div>
+            </form>
+
+            <div
+                style="margin-top: 3rem; display: flex; justify-content: flex-end; gap: 10px; padding-top: 2rem; border-top: 1px solid rgba(255,255,255,0.1);">
+                <button onclick="configManager.reset()"
+                    style="background: transparent; color: #ef4444; border: 1px solid #ef4444; padding: 10px 20px; border-radius: 6px; cursor: pointer;">Restablecer
+                    Predeterminados</button>
+                <button onclick="viewManager.showApp()"
+                    style="margin-left: auto; background: transparent; color: #94a3b8; border: 1px solid #334155; padding: 10px 20px; border-radius: 6px; cursor: pointer;">Cancelar</button>
+                <button onclick="configManager.save()"
+                    style="background: linear-gradient(90deg, #38bdf8, #818cf8); color: white; border: none; padding: 10px 24px; border-radius: 6px; cursor: pointer; font-weight: bold; box-shadow: 0 4px 12px rgba(56,189,248,0.3);">Guardar
+                    y Aplicar</button>
+            </div>
+        </div>
+    </main>
+
+    <script>
+        // --- DEFAULT CONFIG ---
+        const DEFAULTS = {
+            apiUrl: "https://script.google.com/macros/s/YOUR_SCRIPT_DEPLOYMENT_ID/exec",
+            galleries: [
+                { id: 'g1', name: 'Galería 1', url: 'https://drive.google.com/drive/folders/YOUR_DRIVE_FOLDER_ID_1' },
+            ]
+        };
+
+        // --- STATE ---
+        const STATE = {
+            config: JSON.parse(localStorage.getItem('ag_vanilla_config')) || DEFAULTS,
+            activeTab: null,
+            loadedGalleries: new Set()
+        };
+
+        // --- VIEW MANAGER ---
+        const viewManager = {
+            init: () => {
+                // Create Config Button dynamically to append to header
+                const pElement = document.querySelector('header p');
+                const btn = document.createElement('span'); // Use span wrapper
+                btn.innerHTML = `<button class="download-btn" style="margin-left: 15px;">⚙️ Configurar</button>`;
+                btn.onclick = viewManager.showConfig; // Click event on wrapper or button
+                pElement.appendChild(btn);
+
+                viewManager.renderApp();
+            },
+
+            renderApp: () => {
+                const tabsContainer = document.getElementById('tabs-container');
+                const galleryContainer = document.getElementById('gallery-container');
+
+                tabsContainer.innerHTML = '';
+                galleryContainer.innerHTML = '';
+
+                if (STATE.config.galleries.length === 0) {
+                    galleryContainer.innerHTML = '<div class="empty-msg">No hay galerías configuradas. Ve a Configuración para añadir una.</div>';
+                    return;
+                }
+
+                // Set default active tab if null or invalid
+                const validId = STATE.config.galleries.find(g => g.id === STATE.activeTab);
+                if (!validId) {
+                    STATE.activeTab = STATE.config.galleries[0].id;
+                }
+
+                STATE.config.galleries.forEach(g => {
+                    // Tab
+                    const tab = document.createElement('button');
+                    tab.className = `tab-btn ${STATE.activeTab === g.id ? 'active' : ''}`;
+                    tab.textContent = g.name;
+                    tab.onclick = () => appManager.switchTab(g.id);
+                    tabsContainer.appendChild(tab);
+
+                    // Gallery Div
+                    const galDiv = document.createElement('div');
+                    galDiv.id = `gallery-${g.id}`;
+                    galDiv.className = `gallery-content ${STATE.activeTab === g.id ? 'active' : ''}`;
+                    galleryContainer.appendChild(galDiv);
+
+                    // Trigger load if active
+                    if (STATE.activeTab === g.id) {
+                        appManager.loadGalleryData(g);
+                    }
+                });
+
+                document.getElementById('app-view').style.display = 'block';
+                document.getElementById('config-view').style.display = 'none';
+            },
+
+            showConfig: () => {
+                document.getElementById('app-view').style.display = 'none';
+                document.getElementById('config-view').style.display = 'block';
+                configManager.renderForm();
+            },
+
+            showApp: () => {
+                document.getElementById('app-view').style.display = 'block';
+                document.getElementById('config-view').style.display = 'none';
+            }
+        };
+
+        // --- APP LOGIC ---
+        const appManager = {
+            switchTab: (id) => {
+                STATE.activeTab = id;
+
+                // UI Updates relying on re-render or class toggling
+                // Class toggling is faster than full re-render
+                const tabs = document.querySelectorAll('.tab-btn');
+                STATE.config.galleries.forEach((g, i) => {
+                    if (tabs[i]) {
+                        if (g.id === id) tabs[i].classList.add('active');
+                        else tabs[i].classList.remove('active');
+                    }
+                });
+
+                document.querySelectorAll('.gallery-content').forEach(div => {
+                    div.classList.remove('active');
+                    if (div.id === `gallery-${id}`) div.classList.add('active');
+                });
+
+                // Load data
+                if (!STATE.loadedGalleries.has(id)) {
+                    const gallery = STATE.config.galleries.find(g => g.id === id);
+                    if (gallery) appManager.loadGalleryData(gallery);
+                }
+            },
+
+            loadGalleryData: async (gallery) => {
+                const container = document.getElementById(`gallery-${gallery.id}`);
+                if (!container) return;
+
+                container.innerHTML = '<div class="loader"><div class="spinner"></div><p>Cargando imágenes...</p></div>';
+
+                try {
+                    const res = await fetch(`${STATE.config.apiUrl}?url=${encodeURIComponent(gallery.url)}`);
+                    const data = await res.json();
+
+                    if (data.error) throw new Error(data.error);
+
+                    STATE.loadedGalleries.add(gallery.id);
+                    appManager.renderGrid(container, data);
+                } catch (e) {
+                    container.innerHTML = `<div class="error-msg">Error: ${e.message}</div>`;
+                }
+            },
+
+            renderGrid: (container, images) => {
+                if (images.length === 0) {
+                    container.innerHTML = '<div class="empty-msg">Carpeta vacía</div>';
+                    return;
+                }
+
+                container.innerHTML = '';
+                const grid = document.createElement('div');
+                grid.className = 'gallery-grid';
+
+                images.forEach((img, index) => {
+                    const card = document.createElement('div');
+                    card.className = 'card';
+                    card.onclick = () => modalManager.open(images, index);
+                    card.innerHTML = `
+                <div class="img-wrapper">
+                    <img src="${img.variants.medium}" alt="${img.name}" loading="lazy">
+                    <div class="overlay"><span class="icon">🔍</span></div>
+                </div>
+            `;
+                    grid.appendChild(card);
+                });
+                container.appendChild(grid);
+            }
+        };
+
+        // --- MODAL ---
+        const modalManager = {
+            currentImages: [],
+            currentIndex: 0,
+
+            init: () => {
+                const modal = document.createElement('div');
+                modal.id = 'modal';
+                modal.className = 'modal-overlay';
+                modal.style.display = 'none';
+                modal.innerHTML = `
+                <button class="nav-btn prev-btn" id="modal-prev">&#10094;</button>
+                <div class="modal-content">
+                    <img id="modal-img" class="modal-image" src="" alt="">
+                </div>
+                <button class="nav-btn next-btn" id="modal-next">&#10095;</button>
+                <button class="close-btn" id="modal-close">×</button>
+                <div class="info-bar"><span class="info-counter" id="modal-counter"></span></div>
+            `;
+                document.body.appendChild(modal);
+
+                document.getElementById('modal-close').onclick = modalManager.close;
+                document.getElementById('modal-prev').onclick = (e) => { e.stopPropagation(); modalManager.prev(); };
+                document.getElementById('modal-next').onclick = (e) => { e.stopPropagation(); modalManager.next(); };
+                modal.onclick = modalManager.close;
+                modal.querySelector('.modal-content').onclick = (e) => e.stopPropagation();
+
+                document.addEventListener('keydown', (e) => {
+                    if (modal.style.display === 'flex') {
+                        if (e.key === 'Escape') modalManager.close();
+                        if (e.key === 'ArrowRight') modalManager.next();
+                        if (e.key === 'ArrowLeft') modalManager.prev();
+                    }
+                });
+            },
+
+            open: (images, index) => {
+                modalManager.currentImages = images;
+                modalManager.currentIndex = index;
+                modalManager.updateImage();
+                document.getElementById('modal').style.display = 'flex';
+                document.body.style.overflow = 'hidden';
+
+                const img = document.getElementById('modal-img');
+                img.style.animation = 'none';
+                img.offsetHeight;
+                img.style.animation = 'slideInFade 0.4s forwards';
+            },
+
+            close: () => {
+                document.getElementById('modal').style.display = 'none';
+                document.body.style.overflow = 'auto';
+            },
+
+            updateImage: () => {
+                if (!modalManager.currentImages.length) return;
+                const imgData = modalManager.currentImages[modalManager.currentIndex];
+                const imgEl = document.getElementById('modal-img');
+                imgEl.src = imgData.variants.large || imgData.variants.original;
+                document.getElementById('modal-counter').textContent = `${modalManager.currentIndex + 1} / ${modalManager.currentImages.length}`;
+            },
+
+            next: () => {
+                if (!modalManager.currentImages.length) return;
+                modalManager.currentIndex = (modalManager.currentIndex + 1) % modalManager.currentImages.length;
+                modalManager.updateImage();
+            },
+
+            prev: () => {
+                if (!modalManager.currentImages.length) return;
+                modalManager.currentIndex = (modalManager.currentIndex - 1 + modalManager.currentImages.length) % modalManager.currentImages.length;
+                modalManager.updateImage();
+            }
+        };
+
+        // --- CONFIG MANAGER ---
+        const configManager = {
+            tempGalleries: [],
+
+            renderForm: () => {
+                document.getElementById('config-api-url').value = STATE.config.apiUrl;
+                configManager.tempGalleries = JSON.parse(JSON.stringify(STATE.config.galleries));
+                configManager.renderGalleriesList();
+            },
+
+            renderGalleriesList: () => {
+                const container = document.getElementById('config-galleries-list');
+                container.innerHTML = '';
+                configManager.tempGalleries.forEach((g, idx) => {
+                    const row = document.createElement('div');
+                    row.style.cssText = 'display:flex; gap:10px; align-items:center; background:rgba(255,255,255,0.05); padding:10px; border-radius:6px;';
+                    row.innerHTML = `
+                <input value="${g.name}" onchange="configManager.update(${idx}, 'name', this.value)" style="background:transparent; color:white; border:1px solid #334155; padding:8px; border-radius:4px; width:150px;">
+                <input value="${g.url}" onchange="configManager.update(${idx}, 'url', this.value)" style="background:transparent; color:#94a3b8; border:1px solid #334155; padding:8px; border-radius:4px; flex:1;">
+                <button onclick="configManager.remove(${idx})" style="background:rgba(239, 68, 68, 0.2); color:#ef4444; border:none; padding:8px 12px; border-radius:4px; cursor:pointer; font-size:1.2rem;">🗑️</button>
+             `;
+                    container.appendChild(row);
+                });
+            },
+
+            update: (idx, field, val) => {
+                configManager.tempGalleries[idx][field] = val;
+            },
+
+            remove: (idx) => {
+                if (confirm('¿Seguro que deseas eliminar esta galería?')) {
+                    configManager.tempGalleries.splice(idx, 1);
+                    configManager.renderGalleriesList();
+                }
+            },
+
+            add: (e) => {
+                e.preventDefault();
+                const nameInput = document.getElementById('new-name');
+                const urlInput = document.getElementById('new-url');
+                if (!nameInput.value || !urlInput.value) return;
+
+                configManager.tempGalleries.push({ id: `g${Date.now()}`, name: nameInput.value, url: urlInput.value });
+                nameInput.value = '';
+                urlInput.value = '';
+                configManager.renderGalleriesList();
+            },
+
+            save: () => {
+                STATE.config.apiUrl = document.getElementById('config-api-url').value;
+                STATE.config.galleries = configManager.tempGalleries;
+                localStorage.setItem('ag_vanilla_config', JSON.stringify(STATE.config));
+                // Reset loaded state to force refresh
+                STATE.loadedGalleries.clear();
+                STATE.activeTab = null;
+                viewManager.showApp();
+                viewManager.renderApp();
+            },
+
+            reset: () => {
+                if (confirm('¿Estás seguro de restablecer la configuración original?')) {
+                    localStorage.removeItem('ag_vanilla_config');
+                    location.reload();
+                }
+            }
+        };
+
+        document.getElementById('add-gallery-form').onsubmit = configManager.add;
+
+        // START
+        window.addEventListener('DOMContentLoaded', () => {
+            modalManager.init();
+            viewManager.init();
+        });
+
+    </script>
+</body>
+
+</html>

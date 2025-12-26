@@ -1,0 +1,44 @@
+# System Files
+.DS_Store
+Thumbs.db
+*.log
+
+# Node Modules
+node_modules/
+
+# Environment Variables
+.env
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+
+# General Build Outputs
+dist/
+build/
+
+# Next.js (Option 3)
+.next/
+out/
+build/
+
+# Vue.js / Nuxt (Option 4)
+.nuxt/
+.output/
+
+# React (Option 2 - general create-react-app or vite patterns)
+build/
+dist/
+*.local
+
+# Editor directories and files
+.idea/
+.vscode/
+*.swp
+*.swo
+
+# Vercel
+.vercel/
+
+# TypeScript
+*.tsbuildinfo
